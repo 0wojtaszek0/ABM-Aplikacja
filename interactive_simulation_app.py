@@ -495,7 +495,16 @@ def build_rf_disease_sankey() -> go.Figure:
     rfs = list(RF_LABELS_PL.keys())
     diseases = dm.diseases
 
-    nodes = [RF_LABELS_PL[r] for r in rfs] + [DISEASE_LABELS_PL.get(d, d) for d in diseases]
+    # --- BEZPIECZNE WYMUSZENIE KOLORU I ROZMIARU PRZEZ HTML ---
+    # Pakujemy każdy napis w tag span, dzięki czemu Plotly MUSI go wyświetlić na czarno i w większym rozmiarze
+    nodes = [
+        f"<span style='color: black; font-size: 14px; font-weight: bold;'>{RF_LABELS_PL[r]}</span>" 
+        for r in rfs
+    ] + [
+        f"<span style='color: black; font-size: 14px; font-weight: bold;'>{DISEASE_LABELS_PL.get(d, d)}</span>" 
+        for d in diseases
+    ]
+    
     node_colors = (
         [RF_COLORS[r] for r in rfs]
         + [DISEASE_COLORS.get(d, "#7f8c8d") for d in diseases]
@@ -518,18 +527,16 @@ def build_rf_disease_sankey() -> go.Figure:
             r_, g_, b_ = int(c[1:3], 16), int(c[3:5], 16), int(c[5:7], 16)
             link_colors.append(f"rgba({r_},{g_},{b_},0.45)")
 
+    # Konstrukcja obiektu w klasycznej, stabilnej strukturze
     fig = go.Figure(go.Sankey(
         arrangement="snap",
         node=dict(
             pad=15, 
             thickness=22,
             line=dict(color="white", width=1),
-            label=nodes,
+            label=nodes,  # Tutaj trafiają nasze sformatowane napisy HTML
             color=node_colors,
             hovertemplate="%{label}<extra></extra>",
-            
-            # --- KLUCZOWA ZMIANA: Wymuszenie stylu czcionki dla węzłów ---
-            font=dict(color="black", size=14, family="Arial Black, Arial, sans-serif")
         ),
         link=dict(
             source=source, target=target, value=value,
@@ -544,13 +551,15 @@ def build_rf_disease_sankey() -> go.Figure:
                 "<b>Sankey: Przepływ ryzyka (szerokość ∝ β = ln HR)</b><br>"
                 "<sub>Współczynniki β bezpośrednio z DiseaseModel.HAZARD_BETA</sub>"
             ),
-            x=0.5, xanchor="center", 
-            font=dict(size=18, color="black"), # Wyraźny tytuł
+            x=0.5, 
+            xanchor="center", 
+            font=dict(size=18, color="black"),
         ),
         height=600,
         paper_bgcolor="white",
         plot_bgcolor="white",
-        margin=dict(l=40, r=40, t=90, b=40), # Zwiększone marginesy na dłuższe napisy chorób
+        font=dict(family="Arial, sans-serif"),
+        margin=dict(l=50, r=50, t=90, b=40),  # Marginesy dla dłuższych tekstów
     )
     return fig
 
