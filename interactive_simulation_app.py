@@ -536,18 +536,22 @@ def build_rf_disease_sankey() -> go.Figure:
             hovertemplate="%{source.label} → %{target.label}<br>%{label}<extra></extra>",
         ),
     ))
-    fig.update_layout(
+    ffig.update_layout(
         title=dict(
             text=(
                 "<b>Sankey: Przepływ ryzyka (szerokość ∝ β = ln HR)</b><br>"
                 "<sub>Współczynniki β bezpośrednio z DiseaseModel.HAZARD_BETA</sub>"
             ),
-            x=0.5, xanchor="center", font=dict(size=16),
+            x=0.5, 
+            xanchor="center", 
+            # Zwiększamy czcionkę tytułu i wymuszamy czarny kolor
+            font=dict(size=18, color="black"), 
         ),
         height=600,
         paper_bgcolor="white",
         plot_bgcolor="white",
-        font=dict(family="Arial, sans-serif", size=12),
+        # To ustawienie globalnie zmienia czcionkę dla całego wykresu (w tym etykiet Sankey)
+        font=dict(family="Arial, sans-serif", size=14, color="black"),
         margin=dict(l=20, r=20, t=90, b=20),
     )
     return fig
