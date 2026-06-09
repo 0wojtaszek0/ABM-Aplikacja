@@ -537,6 +537,7 @@ def build_rf_disease_sankey() -> go.Figure:
         ),
     ))
     fig.update_layout(
+        text="",
         title=dict(
             x=0.5, 
             xanchor="center", 
