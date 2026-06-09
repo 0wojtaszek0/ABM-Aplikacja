@@ -538,8 +538,6 @@ def build_rf_disease_sankey() -> go.Figure:
     ))
     fig.update_layout(
         title=dict(
-            text=(""
-            ),
             x=0.5, 
             xanchor="center", 
             # Zwiększamy czcionkę tytułu i wymuszamy czarny kolor
