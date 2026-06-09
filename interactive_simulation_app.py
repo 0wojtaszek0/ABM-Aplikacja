@@ -538,9 +538,7 @@ def build_rf_disease_sankey() -> go.Figure:
     ))
     fig.update_layout(
         title=dict(
-            text=(
-                "<b>Sankey: Przepływ ryzyka (szerokość ∝ β = ln HR)</b><br>"
-                "<sub>Współczynniki β bezpośrednio z DiseaseModel.HAZARD_BETA</sub>"
+            text=(""
             ),
             x=0.5, 
             xanchor="center", 
