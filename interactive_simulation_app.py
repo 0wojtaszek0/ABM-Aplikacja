@@ -536,7 +536,7 @@ def build_rf_disease_sankey() -> go.Figure:
             hovertemplate="%{source.label} → %{target.label}<br>%{label}<extra></extra>",
         ),
     ))
-    ffig.update_layout(
+    fig.update_layout(
         title=dict(
             text=(
                 "<b>Sankey: Przepływ ryzyka (szerokość ∝ β = ln HR)</b><br>"
