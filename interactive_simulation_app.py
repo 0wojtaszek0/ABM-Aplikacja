@@ -490,10 +490,7 @@ DISEASE_LABELS_PL = {
 
 
 def build_rf_disease_sankey() -> go.Figure:
-    """Zbuduj diagram Sankey: czynniki ryzyka → choroby na podstawie HAZARD_BETA.
-
-    Szerokość strumienia jest proporcjonalna do β = ln(HR). Tylko krawędzie z β > 0.
-    """
+    """Zbuduj diagram Sankey: czynniki ryzyka → choroby na podstawie HAZARD_BETA."""
     dm = DiseaseModel()
     rfs = list(RF_LABELS_PL.keys())
     diseases = dm.diseases
@@ -515,7 +512,7 @@ def build_rf_disease_sankey() -> go.Figure:
             hr = math.exp(beta)
             source.append(rf_to_idx[rf])
             target.append(disease_to_idx[disease])
-            value.append(beta)  # szerokość ∝ β
+            value.append(beta)
             label.append(f"HR={hr:.2f}, β={beta:.2f}")
             c = RF_COLORS[rf]
             r_, g_, b_ = int(c[1:3], 16), int(c[3:5], 16), int(c[5:7], 16)
@@ -524,11 +521,15 @@ def build_rf_disease_sankey() -> go.Figure:
     fig = go.Figure(go.Sankey(
         arrangement="snap",
         node=dict(
-            pad=15, thickness=22,
+            pad=15, 
+            thickness=22,
             line=dict(color="white", width=1),
             label=nodes,
             color=node_colors,
             hovertemplate="%{label}<extra></extra>",
+            
+            # --- KLUCZOWA ZMIANA: Wymuszenie stylu czcionki dla węzłów ---
+            font=dict(color="black", size=14, family="Arial Black, Arial, sans-serif")
         ),
         link=dict(
             source=source, target=target, value=value,
@@ -536,26 +537,22 @@ def build_rf_disease_sankey() -> go.Figure:
             hovertemplate="%{source.label} → %{target.label}<br>%{label}<extra></extra>",
         ),
     ))
+    
     fig.update_layout(
         title=dict(
             text=(
                 "<b>Sankey: Przepływ ryzyka (szerokość ∝ β = ln HR)</b><br>"
                 "<sub>Współczynniki β bezpośrednio z DiseaseModel.HAZARD_BETA</sub>"
             ),
-            x=0.5, 
-            xanchor="center", 
-            # Zwiększamy czcionkę tytułu i wymuszamy czarny kolor
-            font=dict(size=18, color="black"), 
+            x=0.5, xanchor="center", 
+            font=dict(size=18, color="black"), # Wyraźny tytuł
         ),
         height=600,
         paper_bgcolor="white",
         plot_bgcolor="white",
-        # To ustawienie globalnie zmienia czcionkę dla całego wykresu (w tym etykiet Sankey)
-        font=dict(family="Arial, sans-serif", size=14, color="black"),
-        margin=dict(l=20, r=20, t=90, b=20),
+        margin=dict(l=40, r=40, t=90, b=40), # Zwiększone marginesy na dłuższe napisy chorób
     )
     return fig
-
 
 def build_edges_dataframe() -> pd.DataFrame:
     """Tabela powiązań czynnik ryzyka → choroba z HR i β."""
